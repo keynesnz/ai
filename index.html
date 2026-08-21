@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Geraikita AI Chat</title><meta name="description" content="Chat AI powered by Geraikita">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<aside class="sidebar" id="sidebar">
+  <div class="brand"><div class="logo">G</div><div><b>Geraikita AI</b><small>Chat</small></div></div>
+  <button id="newChat" class="new-chat">＋ Chat baru</button>
+  <div id="history" class="history"></div>
+  <div class="side-bottom"><button id="settingsBtn" class="ghost">⚙ Pengaturan</button><a class="ghost link" href="https://ai.geraikita.com/docs" target="_blank" rel="noopener">Dokumentasi ↗</a></div>
+</aside>
+<main class="main">
+<header class="topbar"><button id="menuBtn" class="icon" aria-label="Menu">☰</button><select id="model">
+<option value="gk/claude-sonnet-4.6">Claude Sonnet 4.6</option>
+<option value="gk/claude-opus-4.8">Claude Opus 4.8</option>
+<option value="gk/claude-haiku-4.5">Claude Haiku 4.5</option>
+<option value="gk/deepseek-v4-flash">DeepSeek V4 Flash</option>
+<option value="gk/qwen-flash">Qwen Flash</option>
+</select><button id="clear" class="icon" title="Hapus chat">⌫</button></header>
+<section id="chat" class="chat"></section>
+<div class="composer-wrap"><form id="form" class="composer"><textarea id="input" rows="1" placeholder="Ketik pesan..." autocomplete="off"></textarea><button id="send" type="submit">➤</button></form><div class="hint">Enter kirim · Shift+Enter baris baru</div></div>
+</main>
+<div id="modal" class="modal hidden"><div class="card">
+<div class="modal-head"><h2>Pengaturan</h2><button id="close">×</button></div>
+<label>URL Cloudflare Worker<input id="workerUrl" placeholder="https://geraikita-chat-api.nama.workers.dev"></label>
+<p class="note">Masukkan URL Worker yang Anda deploy. API key disimpan sebagai Secret di Cloudflare, bukan di GitHub Pages.</p>
+<label>System prompt (opsional)<textarea id="system" rows="4" placeholder="Anda adalah asisten AI yang membantu..."></textarea></label>
+<div class="actions"><button id="save" class="primary">Simpan</button><button id="reset" class="danger">Reset</button></div>
+<a href="https://ai.geraikita.com/docs" target="_blank" rel="noopener">Dokumentasi Geraikita →</a>
+</div></div>
+<script src="app.js"></script>
+</body></html>
