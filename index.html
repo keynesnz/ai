@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Geraikita AI Chat</title>
+<meta name="description" content="Chat AI powered by Geraikita">
+<link rel="stylesheet" href="style.css">
+
+<style>
+.code-tools {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  margin: 6px 0;
+}
+
+.code-tools button,
+.copy-all-code {
+  border: 1px solid rgba(127,127,127,.25);
+  background: rgba(127,127,127,.10);
+  color: inherit;
+  border-radius: 7px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.code-tools button:hover,
+.copy-all-code:hover {
+  background: rgba(127,127,127,.20);
+}
+
+.code-wrapper {
+  margin: 10px 0;
+}
+
+.code-wrapper pre {
+  margin: 0;
+  overflow-x: auto;
+}
+
+.copy-all-wrap {
+  display: flex;
+  justify-content: flex-end;
+  margin: 8px 0;
+}
+
+.progress-wrap {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(127,127,127,.08);
+  font-size: 13px;
+}
+
+.progress-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 7px;
+}
+
+.progress-bar {
+  height: 4px;
+  overflow: hidden;
+  border-radius: 4px;
+  background: rgba(127,127,127,.18);
+}
+
+.progress-bar::after {
+  content: "";
+  display: block;
+  width: 35%;
+  height: 100%;
+  border-radius: inherit;
+  background: currentColor;
+  animation: progressMove 1.2s infinite ease-in-out;
+}
+
+@keyframes progressMove {
+  0%   { transform: translateX(-120%); }
+  100% { transform: translateX(330%); }
+}
+
+.waiting-dots::after {
+  content: "";
+  animation: dots 1.4s infinite;
+}
+
+@keyframes dots {
+  0%   { content: ""; }
+  33%  { content: "."; }
+  66%  { content: ".."; }
+  100% { content: "..."; }
+}
+</style>
+</head>
+
+<body>
+
+<aside class="sidebar" id="sidebar">
+
+  <div class="brand">
+    <div class="logo">G</div>
+    <div>
+      <b>Geraikita AI</b>
+      <small>Chat</small>
+    </div>
+  </div>
+
+  <button id="newChat" class="new-chat">＋ Chat baru</button>
+
+  <div id="history" class="history"></div>
+
+  <div class="side-bottom">
+    <button id="settingsBtn" class="ghost">⚙ Pengaturan</button>
+
+    <a
+      class="ghost link"
+      href="https://ai.geraikita.com/docs"
+      target="_blank"
+      rel="noopener"
+    >
+      Dokumentasi ↗
+    </a>
+  </div>
+
+</aside>
+
+<main class="main">
+
+<header class="topbar">
+
+  <button id="menuBtn" class="icon" aria-label="Menu">
+    ☰
+  </button>
+
+  <select id="model">
+
+    <optgroup label="Claude">
+      <option value="claude-opus-5">Claude Opus 5</option>
+      <option value="claude-opus-4-8">Claude Opus 4.8</option>
+      <option value="claude-opus-4-6">Claude Opus 4.6</option>
+      <option value="claude-opus-4-7">Claude Opus 4.7</option>
+      <option value="claude-sonnet-5">Claude Sonnet 5</option>
+      <option value="claude-sonnet-4-6">Claude Sonnet 4.6</option>
+      <option value="claude-haiku-4-5">Claude Haiku 4.5</option>
+      <option value="claude-fable-5">Claude Fable 5</option>
+      <option value="claude-opus-5-thinking">Claude Opus 5 Thinking</option>
+      <option value="claude-sonnet-5-thinking">Claude Sonnet 5 Thinking</option>
+    </optgroup>
+
+    <optgroup label="DeepSeek">
+      <option value="deepseek-v4-pro">DeepSeek V4 Pro</option>
+      <option value="deepseek-v4-flash">DeepSeek V4 Flash</option>
+    </optgroup>
+
+    <optgroup label="GLM">
+      <option value="glm-5.1">GLM-5.1</option>
+      <option value="glm-5-turbo">GLM-5 Turbo</option>
+      <option value="glm-5.3">GLM 5.3</option>
+      <option value="glm-5.2">GLM 5.2</option>
+    </optgroup>
+
+    <optgroup label="GPT">
+      <option value="gpt-5.4">GPT 5.4</option>
+      <option value="gpt-5.5">GPT 5.5</option>
+      <option value="gpt-5.5-xhigh">GPT 5.5-xhigh</option>
+      <option value="gpt-5.6-luna">GPT 5.6 Luna</option>
+      <option value="gpt-5.6-sol">GPT 5.6 Sol</option>
+      <option value="gpt-5.6-terra">GPT 5.6 Terra</option>
+    </optgroup>
+
+    <optgroup label="Qwen">
+      <option value="qwen-max">Qwen3 Max</option>
+      <option value="qwen-plus">Qwen3 Plus</option>
+      <option value="qwen-flash">Qwen3 Flash</option>
+      <option value="qwen-coder-plus">Qwen3 Coder Plus</option>
+    </optgroup>
+
+    <optgroup label="Kimi">
+      <option value="kimi-k2.7-code">Kimi K2.7 Code</option>
+      <option value="kimi-k3">Kimi K3</option>
+    </optgroup>
+
+  </select>
+
+  <button id="clear" class="icon" title="Hapus chat">
+    ⌫
+  </button>
+
+</header>
+
+<section id="chat" class="chat"></section>
+
+<div class="composer-wrap">
+
+<form id="form" class="composer">
+
+<textarea
+  id="input"
+  rows="1"
+  placeholder="Ketik pesan..."
+  autocomplete="off"
+></textarea>
+
+<button id="send" type="submit">
+  ➤
+</button>
+
+</form>
+
+<div class="hint">
+  Enter kirim · Shift+Enter baris baru
+</div>
+
+</div>
+
+</main>
+
+<div id="modal" class="modal hidden">
+
+<div class="card">
+
+<div class="modal-head">
+  <h2>Pengaturan</h2>
+  <button id="close">×</button>
+</div>
+
+<label>
+  URL Cloudflare Worker
+
+  <input
+    id="workerUrl"
+    placeholder="https://purple-dew-e090.sabar-41c.workers.dev"
+  >
+</label>
+
+<p class="note">
+  API key disimpan sebagai Secret di Cloudflare,
+  bukan di GitHub Pages.
+</p>
+
+<label>
+  System prompt (opsional)
+
+  <textarea
+    id="system"
+    rows="4"
+    placeholder="Anda adalah asisten AI yang membantu..."
+  ></textarea>
+</label>
+
+<div class="actions">
+  <button id="save" class="primary">
+    Simpan
+  </button>
+
+  <button id="reset" class="danger">
+    Reset
+  </button>
+</div>
+
+<a
+  href="https://ai.geraikita.com/docs"
+  target="_blank"
+  rel="noopener"
+>
+  Dokumentasi Geraikita →
+</a>
+
+</div>
+</div>
+
+<script src="app.js"></script>
+
+</body>
+  </html>
